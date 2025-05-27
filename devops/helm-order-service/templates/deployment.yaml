@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "order-service.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "order-service.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "order-service.name" . }}
+    spec:
+      containers:
+        - name: order-service
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "{{ .Values.env.SPRING_DATASOURCE_URL }}"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "{{ .Values.env.SPRING_DATASOURCE_USERNAME }}"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "{{ .Values.env.SPRING_DATASOURCE_PASSWORD }}"
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: "{{ .Values.env.SPRING_JPA_HIBERNATE_DDL_AUTO }}"
+            - name: POSTGRES_MAX_CONNECTIONS
+              value: "300"
+          resources:
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}

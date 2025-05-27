@@ -1,0 +1,32 @@
+replicaCount: 2
+
+image:
+  repository: ignaciomaylin/order-service
+  pullPolicy: Always
+  tag: "v1"
+
+service:
+  type: LoadBalancer
+  port: 8080
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 448Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+env:
+  SPRING_DATASOURCE_URL: jdbc:postgresql://order-postgres:5432/orderdb
+  SPRING_DATASOURCE_USERNAME: orderuser
+  SPRING_DATASOURCE_PASSWORD: orderpass
+  SPRING_JPA_HIBERNATE_DDL_AUTO: none
+  SPRING_JPA_OPEN_IN_VIEW: false
+
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
